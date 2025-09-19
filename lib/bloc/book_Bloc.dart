@@ -1,17 +1,22 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../model/book.dart';
-import '../repository/bookServiceApi.dart';
+import '../repository/book_service_api.dart';
 
 abstract class BookEvent {}
+
 class LoadBooks extends BookEvent {}
 
 abstract class BookState {}
+
 class BookInitial extends BookState {}
+
 class BookLoading extends BookState {}
+
 class BookLoaded extends BookState {
   final List<Book> books;
   BookLoaded(this.books);
 }
+
 class BookError extends BookState {
   final String message;
   BookError(this.message);
