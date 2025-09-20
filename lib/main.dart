@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'ui/vista_buscar.dart';
 import 'ui/vista_libros.dart';
+import 'bloc/book_bloc.dart';
+import 'repository/book_service_api.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,11 +14,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Gutendex App',
-      theme: ThemeData(primarySwatch: Colors.orange),
-      home: const MainPage(),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<BookServiceApi>(
+          create: (_) => BookServiceApi(),
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<BookBloc>(
+            create: (context) => BookBloc(
+              RepositoryProvider.of<BookServiceApi>(context),
+            ),
+          ),
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Gutendex App',
+          theme: ThemeData(primarySwatch: Colors.orange),
+          home: const MainPage(),
+        ),
+      ),
     );
   }
 }
@@ -47,7 +66,7 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       body: PageView(
         controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(), // solo cambia con nav
+        physics: const NeverScrollableScrollPhysics(),
         children: const [BookListView(), BookSearchView()],
       ),
       bottomNavigationBar: BottomNavigationBar(
